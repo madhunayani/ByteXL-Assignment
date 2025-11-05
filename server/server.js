@@ -1,4 +1,3 @@
-// server.js
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
@@ -7,28 +6,47 @@ const axios = require('axios');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// CORS Configuration for both development and production
-const allowedOrigins = [
-  'http://localhost:5173',
-  'http://localhost:3000',
-  process.env.FRONTEND_URL || 'https://infohub-frontend.onrender.com'
-];
-
-app.use(cors({
+// ==================== CORS CONFIGURATION ====================
+// Allow requests from both development and production
+const corsOptions = {
   origin: function (origin, callback) {
+    // List of allowed origins
+    const allowedOrigins = [
+      'http://localhost:5173',           // Local development
+      'http://localhost:3000',           // Alternative local
+      'https://infohub-frontend-wqak.onrender.com',  // Your Render frontend URL
+      'https://infohub-frontend.onrender.com',       // Generic Render URL
+    ];
+
+    // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
     }
   },
-  credentials: true
-}));
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  optionsSuccessStatus: 200
+};
 
+app.use(cors(corsOptions));
 app.use(express.json());
 
-// Rest of your server code...
-// Mock quotes data (you can replace with external API later)
+// ==================== HEALTH CHECK ENDPOINT ====================
+app.get('/', (req, res) => {
+  res.json({ 
+    message: 'InfoHub API is running!',
+    endpoints: {
+      quote: '/api/quote',
+      weather: '/api/weather?city=YourCity',
+      currency: '/api/currency?amount=100'
+    }
+  });
+});
+
+// ==================== QUOTE API ENDPOINT ====================
 const quotesDatabase = [
   { text: "The only way to do great work is to love what you do.", author: "Steve Jobs" },
   { text: "Innovation distinguishes between a leader and a follower.", author: "Steve Jobs" },
@@ -42,18 +60,10 @@ const quotesDatabase = [
   { text: "Your time is limited, don't waste it living someone else's life.", author: "Steve Jobs" }
 ];
 
-// ==================== API ENDPOINTS ====================
-
-// 1. Quote API Endpoint - /api/quote
 app.get('/api/quote', async (req, res) => {
   try {
-    // Random selection from mock data
     const randomIndex = Math.floor(Math.random() * quotesDatabase.length);
     const randomQuote = quotesDatabase[randomIndex];
-    
-    // You can also use external API like Quotable:
-    // const response = await axios.get('https://api.quotable.io/random');
-    // res.json(response.data);
     
     res.json({
       success: true,
@@ -69,10 +79,9 @@ app.get('/api/quote', async (req, res) => {
   }
 });
 
-// 2. Weather API Endpoint - /api/weather
+// ==================== WEATHER API ENDPOINT ====================
 app.get('/api/weather', async (req, res) => {
   try {
-    // Get city from query params or use default
     const city = req.query.city || 'Hyderabad';
     const apiKey = process.env.OPENWEATHER_API_KEY;
     
@@ -83,11 +92,9 @@ app.get('/api/weather', async (req, res) => {
       });
     }
 
-    // Call OpenWeatherMap API
     const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
     const response = await axios.get(weatherUrl);
     
-    // Extract only necessary data
     const weatherData = {
       success: true,
       city: response.data.name,
@@ -111,10 +118,9 @@ app.get('/api/weather', async (req, res) => {
   }
 });
 
-// 3. Currency Converter API Endpoint - /api/currency
+// ==================== CURRENCY API ENDPOINT ====================
 app.get('/api/currency', async (req, res) => {
   try {
-    // Get amount from query params
     const amount = parseFloat(req.query.amount) || 100;
     
     if (isNaN(amount) || amount <= 0) {
@@ -124,12 +130,10 @@ app.get('/api/currency', async (req, res) => {
       });
     }
 
-    // Using exchangerate-api.com (no API key required for basic usage)
     const response = await axios.get('https://api.exchangerate-api.com/v4/latest/INR');
     
     const rates = response.data.rates;
     
-    // Calculate conversions
     const conversions = {
       success: true,
       amount: amount,
@@ -155,23 +159,23 @@ app.get('/api/currency', async (req, res) => {
   }
 });
 
-// Root endpoint - Health check
-app.get('/', (req, res) => {
-  res.json({ 
-    message: 'InfoHub API is running!',
-    endpoints: {
-      quote: '/api/quote',
-      weather: '/api/weather?city=YourCity',
-      currency: '/api/currency?amount=100'
-    }
+// ==================== ERROR HANDLING ====================
+app.use((err, req, res, next) => {
+  console.error('Server Error:', err);
+  res.status(err.status || 500).json({
+    success: false,
+    error: err.message || 'Internal Server Error'
   });
 });
 
-// Start server
+// ==================== START SERVER ====================
 app.listen(PORT, () => {
-  console.log(`✅ InfoHub Backend Server is running on http://localhost:${PORT}`);
+  console.log(`✅ InfoHub Backend Server is running on port ${PORT}`);
   console.log(`📍 Available endpoints:`);
   console.log(`   - GET /api/quote`);
   console.log(`   - GET /api/weather?city=YourCity`);
   console.log(`   - GET /api/currency?amount=100`);
+  console.log(`🌐 CORS enabled for:`);
+  console.log(`   - http://localhost:5173`);
+  console.log(`   - https://infohub-frontend-wqak.onrender.com`);
 });
