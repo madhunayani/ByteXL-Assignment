@@ -77,14 +77,12 @@ cd InfoHub-Challenge
 
 2. **Setup Backend**
 cd server
-
 npm install
 
 
 
 4. **Setup Frontend**
 cd ../client
-
 npm install
 
 
