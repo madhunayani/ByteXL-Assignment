@@ -77,16 +77,18 @@ cd InfoHub-Challenge
 
 2. **Setup Backend**
 cd server
+
 npm install
 
 
 
-3. **Setup Frontend**
+4. **Setup Frontend**
 cd ../client
+
 npm install
 
 
-4. **Configure API Key**
+5. **Configure API Key**
 - Create `server/.env` file:
   ```
   PORT=3001
@@ -96,15 +98,17 @@ npm install
 
 5. **Start Backend** (Terminal 1)
 cd server
+
 npm start
 
 
-6. **Start Frontend** (Terminal 2)
+7. **Start Frontend** (Terminal 2)
 cd client
+
 npm run dev
 
 
-7. **Open in Browser**
+9. **Open in Browser**
 http://localhost:5173
 
 
