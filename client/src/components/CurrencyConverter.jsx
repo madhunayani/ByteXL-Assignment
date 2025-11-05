@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api';
 
 export default function CurrencyConverter() {
   const [data, setData] = useState(null);
@@ -11,7 +11,9 @@ export default function CurrencyConverter() {
     setIsLoading(true);
     setError('');
     try {
-      const response = await axios.get(`/api/currency?amount=${amountValue}`);
+      const response = await api.get('/api/currency', { 
+        params: { amount: amountValue } 
+      });
       setData(response.data);
     } catch (err) {
       setError(err.response?.data?.error || 'Failed to fetch currency data');
@@ -23,7 +25,7 @@ export default function CurrencyConverter() {
 
   useEffect(() => {
     fetchCurrency(amount);
-  }, [amount]); // Only 'amount' as dependency
+  }, [amount]);
 
   return (
     <div className="module-container currency-module">

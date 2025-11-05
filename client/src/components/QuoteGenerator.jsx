@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import axios from 'axios';
+import api from '../api';
 
 export default function QuoteGenerator() {
   const [data, setData] = useState(null);
@@ -10,7 +10,7 @@ export default function QuoteGenerator() {
     setIsLoading(true);
     setError('');
     try {
-      const response = await axios.get('/api/quote');
+      const response = await api.get('/api/quote');
       setData(response.data);
     } catch (err) {
       setError(err.response?.data?.error || 'Failed to fetch quote');
@@ -20,7 +20,6 @@ export default function QuoteGenerator() {
     }
   };
 
-  // Fetch a quote when component mounts
   const handleNewQuote = () => {
     fetchQuote();
   };

@@ -1,0 +1,9 @@
+{
+  "buildCommand": "cd client && npm run build && cd ../server && npm install",
+  "envVars": [
+    {
+      "key": "OPENWEATHER_API_KEY",
+      "scope": "all"
+    }
+  ]
+}

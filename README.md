@@ -161,7 +161,7 @@ GET http://localhost:3001/api/currency?amount=1000
 
 ## 🌐 Deployment
 
-### Deploy on Vercel
+### Deploy on Render
 
 1. **Push to GitHub**
 git add .
@@ -169,25 +169,47 @@ git commit -m "Initial commit: InfoHub utility app"
 git push -u origin main
 
 
-2. **Connect to Vercel**
-- Go to https://vercel.com
-- Sign up / Log in
-- Click "New Project"
-- Import GitHub repository
-- Select `InfoHub-Challenge`
+2. **Create Render Account**
+- Go to https://render.com
+- Sign up with GitHub
+- Authorize Render to access your GitHub account
 
-3. **Configure Environment Variables**
-- Add `OPENWEATHER_API_KEY` in Vercel dashboard
-- Value: Your OpenWeatherMap API key
+3. **Deploy Backend**
+- In Render dashboard, click **"New +"**
+- Select **"Web Service"**
+- Connect GitHub repository
+- Configure:
+  - **Name**: `infohub-backend`
+  - **Root Directory**: `server`
+  - **Runtime**: `Node`
+  - **Build Command**: `npm install`
+  - **Start Command**: `npm start`
+  - **Environment Variables**: 
+    - `OPENWEATHER_API_KEY`: Your API key
+- Deploy!
 
-4. **Deploy**
-- Vercel automatically detects Vite + Express setup
-- Build runs automatically
-- Your app is live!
+4. **Deploy Frontend**
+- In Render dashboard, click **"New +"**
+- Select **"Static Site"**
+- Connect same GitHub repository
+- Configure:
+  - **Name**: `infohub-frontend`
+  - **Root Directory**: `client`
+  - **Build Command**: `npm install && npm run build`
+  - **Publish Directory**: `dist`
+- Deploy!
 
-5. **Access Your App**
-- Check Vercel dashboard for live URL
-- Share the link!
+5. **Connect Frontend to Backend**
+- Get backend URL from Render (e.g., `https://infohub-backend.onrender.com`)
+- In frontend, update API calls to use backend URL
+- Redeploy frontend
+
+6. **Access Your App**
+- Frontend URL: `https://infohub-frontend.onrender.com`
+- Backend API: `https://infohub-backend.onrender.com/api/quote`
+
+
+
 
 ## 📝 Development Notes
 

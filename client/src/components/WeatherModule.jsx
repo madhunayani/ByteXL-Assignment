@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api';
 
 export default function WeatherModule() {
   const [data, setData] = useState(null);
@@ -12,7 +12,9 @@ export default function WeatherModule() {
     setIsLoading(true);
     setError('');
     try {
-      const response = await axios.get(`/api/weather?city=${cityName}`);
+      const response = await api.get('/api/weather', { 
+        params: { city: cityName } 
+      });
       setData(response.data);
     } catch (err) {
       setError(err.response?.data?.error || 'Failed to fetch weather data');
@@ -24,7 +26,7 @@ export default function WeatherModule() {
 
   useEffect(() => {
     fetchWeather(city);
-  }, [city]); // Only 'city' as dependency
+  }, [city]);
 
   const handleSearch = () => {
     if (inputCity.trim()) {
